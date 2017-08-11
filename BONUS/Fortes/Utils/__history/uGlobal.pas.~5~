@@ -1,0 +1,10 @@
+unit uGlobal;
+
+interface
+
+type
+  TTipo = (tpGasolina, TpGas);
+
+implementation
+
+end.

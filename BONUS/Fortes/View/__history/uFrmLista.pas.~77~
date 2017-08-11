@@ -1,0 +1,183 @@
+unit uFrmLista;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, Vcl.Grids, Vcl.DBGrids,
+  dxGDIPlusClasses, Vcl.ExtCtrls, Vcl.StdCtrls, FireDAC.Stan.Intf,
+  FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
+  FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt,
+  FireDAC.Comp.DataSet, FireDAC.Comp.Client, uGlobal, uPersistentObject;
+
+type
+  TFrmLista = class(TForm)
+    Panel1: TPanel;
+    lblTitulo: TLabel;
+    img1: TImage;
+    DBGridList: TDBGrid;
+    Panel2: TPanel;
+    fdqryLista: TFDQuery;
+    dsLista: TDataSource;
+    btnInsert: TButton;
+    btnEdit: TButton;
+    btnDelete: TButton;
+    constructor Create(Sender: TObject; TpForm: TpCadastro); reintroduce;
+    procedure FormShow(Sender: TObject);
+    procedure CustomAfterScroll(DataSet: TDataSet);
+    procedure btnInsertClick(Sender: TObject);
+    procedure btnEditClick(Sender: TObject);
+    procedure btnDeleteClick(Sender: TObject);
+  private
+    Id: Integer;
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  FrmLista   : TFrmLista;
+  gTpCadastro: TpCadastro;
+  gPersistent: TPersintentObject;
+
+implementation
+
+uses
+  uFrmCadEmpresa, moEmpresa, uFrmCadDefault;
+
+{$R *.dfm}
+{ TFrmLista }
+
+procedure FixDBGridColumnsWidth(const DBGrid: TDBGrid);
+var
+  i                   : Integer;
+  TotWidth            : Integer;
+  VarWidth            : Integer;
+  ResizableColumnCount: Integer;
+  AColumn             : TColumn;
+begin
+  // total width of all columns before resize
+  TotWidth := 0;
+  // how to divide any extra space in the grid
+  VarWidth := 0;
+  // how many columns need to be auto-resized
+  ResizableColumnCount := 0;
+
+  for i := 0 to -1 + DBGrid.Columns.Count do
+  begin
+    TotWidth := TotWidth + DBGrid.Columns[i].Width;
+    if DBGrid.Columns[i].Field.Tag = 0 then
+      Inc(ResizableColumnCount);
+  end;
+
+  // add 1px for the column separator line
+  if dgColLines in DBGrid.Options then
+    TotWidth := TotWidth + DBGrid.Columns.Count;
+
+  // add indicator column width
+  if dgIndicator in DBGrid.Options then
+    TotWidth := TotWidth + IndicatorWidth;
+
+  // width vale "left"
+  VarWidth := DBGrid.ClientWidth - TotWidth;
+
+  // Equally distribute VarWidth
+  // to all auto-resizable columns
+  if ResizableColumnCount > 0 then
+    VarWidth := VarWidth div ResizableColumnCount;
+
+  for i := 0 to -1 + DBGrid.Columns.Count do
+  begin
+    AColumn := DBGrid.Columns[i];
+    if AColumn.Field.Tag = 0 then
+    begin
+      AColumn.Width := AColumn.Width + VarWidth;
+      if AColumn.Width > 0 then
+        AColumn.Width := AColumn.Field.Tag;
+    end;
+  end;
+end; (* FixDBGridColumnsWidth *)
+
+procedure TFrmLista.btnDeleteClick(Sender: TObject);
+begin
+  if Application.MessageBox('Deseja realmente excluir o registro?', 'Informativo', MB_YESNO + MB_ICONQUESTION) = IDYES then
+  begin
+    dsLista.DataSet.Delete;
+  end;
+end;
+
+procedure TFrmLista.btnEditClick(Sender: TObject);
+var
+  FForm: TfrmCadDefault;
+begin
+  case gTpCadastro of
+    tpCadEmpresa:
+      begin
+        FForm := TFrmCadEmpresa.Create(Application, tpCrudEdit, Id);
+        FForm.ShowModal;
+        FreeAndNil(FForm);
+      end;
+    tpCadBomba:
+      ;
+    tpCadTanque:
+      ;
+  end;
+
+  dsLista.DataSet             := gPersistent.LoadAll;
+  dsLista.DataSet.AfterScroll := CustomAfterScroll;
+  dsLista.DataSet.First;
+end;
+
+procedure TFrmLista.btnInsertClick(Sender: TObject);
+var
+  FForm: TfrmCadDefault;
+begin
+  case gTpCadastro of
+    tpCadEmpresa:
+      begin
+        FForm := TFrmCadEmpresa.Create(Application, tpCrudInsert, Id);
+        FForm.ShowModal;
+        FreeAndNil(FForm);
+      end;
+    tpCadBomba:
+      ;
+    tpCadTanque:
+      ;
+  end;
+  dsLista.DataSet             := gPersistent.LoadAll;
+  dsLista.DataSet.AfterScroll := CustomAfterScroll;
+  dsLista.DataSet.First;
+end;
+
+constructor TFrmLista.Create(Sender: TObject; TpForm: TpCadastro);
+begin
+  inherited Create(Self.Owner);
+  gTpCadastro := TpForm;
+end;
+
+procedure TFrmLista.CustomAfterScroll(DataSet: TDataSet);
+begin
+  Id := dsLista.DataSet.FieldByName(gPersistent.GetKeyField).Value;
+end;
+
+procedure TFrmLista.FormShow(Sender: TObject);
+var
+  vEmpresa: TEmpresa;
+begin
+  case gTpCadastro of
+    tpCadEmpresa:
+      begin
+        gPersistent     := TEmpresa.Create;
+        dsLista.DataSet := gPersistent.LoadAll;
+      end;
+    tpCadBomba:
+      ;
+    tpCadTanque:
+      ;
+  end;
+  dsLista.DataSet.AfterScroll := CustomAfterScroll;
+  Id                          := dsLista.DataSet.FieldByName(gPersistent.GetKeyField).Value;
+  lblTitulo.Caption           := gPersistent.GetListaDescricao;
+end;
+
+end.

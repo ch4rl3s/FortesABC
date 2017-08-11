@@ -1,0 +1,31 @@
+unit moTanque;
+
+interface
+
+uses uGlobal, System.Generics.Collections, moBomba;
+
+type
+
+  [Tablename('TB_TANQUE')]
+  TTanque = class
+  private
+    // atributos da classe
+    FCodigo   : integer;
+    FSerial   : string;
+    FDescricao: string;
+    FTipo     : TTipo;
+    FBombas   : TObjectList<TBomba>;
+  public
+    [FieldName('CODIGO', True, True)]
+    property Codigo: integer read FCodigo write FCodigo;
+    [FieldName('DESCRICAO', True, True)]
+    property Descricao: string read FDescricao write FDescricao;
+    property Tipo     : TTipo read FTipo write FTipo;
+    property Bombas   : TObjectList<TBomba> read FBombas write FBombas;
+  end;
+
+implementation
+
+{ TTanque }
+
+end.

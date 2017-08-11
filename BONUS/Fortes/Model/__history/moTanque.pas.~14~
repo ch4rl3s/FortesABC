@@ -1,0 +1,41 @@
+unit moTanque;
+
+interface
+
+uses uGlobal, System.Generics.Collections, moBomba;
+
+type
+
+  TTanque = class
+  private
+    // atributos da classe
+    FCodigo: integer;
+    FSerial: string;
+    FTanque: string;
+    FTipo  : TTipo;
+    FBombas: TObjectList<TBomba>;
+  public
+    // métodos públicos da classe
+    constructor Create;
+
+    property Codigo: integer read FCodigo write FCodigo;
+    property Tanque: string read FTanque write FTanque;
+    property Tipo: TTipo read FTipo write FTipo;
+    property Serial: string read FSerial write FSerial;
+    property Bombas: TObjectList<TBomba> read FBombas write FBombas;
+  end;
+
+implementation
+
+{ TTanque }
+
+constructor TTanque.Create;
+begin
+  FCodigo := 0;
+  FTanque := '';
+  FSerial := '';
+  FTipo   := tpGasolina;
+
+end;
+
+end.

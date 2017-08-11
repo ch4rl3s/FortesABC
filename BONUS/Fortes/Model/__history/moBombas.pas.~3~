@@ -1,0 +1,26 @@
+unit moBombas;
+
+interface
+
+type
+
+  TBombas = class
+  private
+    // atributos da classe
+    FCodigo: integer;
+    FSerial: string;
+    FTanque: string;
+    FTipo  : TTipo;
+  public
+    // métodos públicos da classe
+    constructor Create;
+
+    property Codigo: integer read FCodigo write FCodigo;
+    property Tanque: string read FTanque write FTanque;
+    property Tipo: TTipo read FTipo write FTipo;
+    property Serial: string read FSerial write FSerial;
+  end;
+
+implementation
+
+end.

@@ -1,0 +1,25 @@
+unit moBomba;
+
+interface
+
+type
+
+  TBomba = class
+  private
+    // atributos da classe
+    FCodigo: integer;
+    FSerial: String;
+    FTanque: integer;
+
+  public
+    property Codigo   : integer read FCodigo write FCodigo;
+    property Descricao: String read FSerial write FSerial;
+    property Tanque   : integer read FTanque write FTanque;
+
+  end;
+
+implementation
+
+{ TBombas }
+
+end.

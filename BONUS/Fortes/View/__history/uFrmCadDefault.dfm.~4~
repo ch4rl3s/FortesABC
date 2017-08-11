@@ -1,0 +1,47 @@
+object Form1: TForm1
+  Left = 0
+  Top = 0
+  Caption = 'Form1'
+  ClientHeight = 452
+  ClientWidth = 873
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  OldCreateOrder = False
+  PixelsPerInch = 96
+  TextHeight = 13
+  object pnl1: TPanel
+    AlignWithMargins = True
+    Left = 3
+    Top = 392
+    Width = 867
+    Height = 57
+    Align = alBottom
+    BevelKind = bkFlat
+    BevelOuter = bvNone
+    TabOrder = 0
+    object btnOK: TButton
+      Left = 464
+      Top = 8
+      Width = 193
+      Height = 41
+      Caption = 'Confirmar'
+      TabOrder = 0
+    end
+    object btnCancel: TButton
+      Left = 662
+      Top = 9
+      Width = 193
+      Height = 41
+      Caption = 'Cancelar'
+      TabOrder = 1
+    end
+  end
+  object imgLst32: TImageList
+    Left = 760
+    Top = 88
+  end
+end

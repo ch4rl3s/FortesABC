@@ -1,0 +1,11 @@
+unit uGlobal;
+
+interface
+
+type
+  TTipo      = (tpGasolina, TpGas);
+  TpCadastro = (tpEmpresa, tpBomba, tpTanque);
+
+implementation
+
+end.

@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2017/08/09 09:22:57.000.590,=C:\Users\rchar\Documents\Embarcadero\Studio\Projects\Unit5.pas</Transaction>
+    <Transaction>2017/08/09 10:01:40.000.476,C:\Users\rchar\Documents\Embarcadero\Studio\Projects\Unit5.dfm=D:\Charles\Delphi\Fortes\uFrmPrincipal.dfm</Transaction>
+    <Transaction>2017/08/09 10:01:40.000.476,C:\Users\rchar\Documents\Embarcadero\Studio\Projects\Unit5.pas=D:\Charles\Delphi\Fortes\uFrmPrincipal.pas</Transaction>
+    <Transaction>2017/08/09 10:02:07.000.247,C:\Users\rchar\Documents\Embarcadero\Studio\Projects\Project5.dproj=D:\Charles\Delphi\Fortes\PostoGas.dproj</Transaction>
+    <Transaction>2017/08/09 10:02:32.000.725,=D:\Charles\Delphi\Fortes\Unit1.pas</Transaction>
+    <Transaction>2017/08/09 10:12:13.000.269,D:\Charles\Delphi\Fortes\Unit1.pas=D:\Charles\Delphi\Fortes\Model\moEmpresa.pas</Transaction>
+    <Transaction>2017/08/09 10:12:13.000.269,D:\Charles\Delphi\Fortes\Unit1.dfm=D:\Charles\Delphi\Fortes\Model\moEmpresa.dfm</Transaction>
+    <Transaction>2017/08/09 10:12:23.000.662,=D:\Charles\Delphi\Fortes\Unit2.pas</Transaction>
+    <Transaction>2017/08/09 10:12:35.000.707,D:\Charles\Delphi\Fortes\Model\moEmpresa.pas=</Transaction>
+    <Transaction>2017/08/09 10:12:40.000.073,=D:\Charles\Delphi\Fortes\Unit1.pas</Transaction>
+    <Transaction>2017/08/09 10:12:51.000.776,D:\Charles\Delphi\Fortes\Unit1.pas=D:\Charles\Delphi\Fortes\Model\moEmpresa.pas</Transaction>
+    <Transaction>2017/08/09 10:13:01.000.993,=D:\Charles\Delphi\Fortes\Unit1.pas</Transaction>
+    <Transaction>2017/08/09 10:14:33.000.054,D:\Charles\Delphi\Fortes\Unit1.pas=D:\Charles\Delphi\Fortes\Model\moTanque.pas</Transaction>
+    <Transaction>2017/08/09 10:14:50.000.360,=D:\Charles\Delphi\Fortes\Unit1.pas</Transaction>
+    <Transaction>2017/08/09 10:15:03.000.424,D:\Charles\Delphi\Fortes\Unit1.pas=D:\Charles\Delphi\Fortes\Model\moBombas.pas</Transaction>
+    <Transaction>2017/08/09 11:11:33.000.718,=D:\Charles\Delphi\Fortes\Unit1.pas</Transaction>
+    <Transaction>2017/08/09 11:11:54.000.356,D:\Charles\Delphi\Fortes\Unit1.pas=D:\Charles\Delphi\Fortes\Utils\uGlobal.pas</Transaction>
+    <Transaction>2017/08/09 11:22:03.000.291,D:\Charles\Delphi\Fortes\Model\moBombas.pas=D:\Charles\Delphi\Fortes\Model\moBomba.pas</Transaction>
+    <Transaction>2017/08/09 15:29:43.000.949,=D:\Charles\Delphi\Fortes\Unit1.pas</Transaction>
+    <Transaction>2017/08/09 15:30:02.000.275,D:\Charles\Delphi\Fortes\Unit1.pas=D:\Charles\Delphi\Fortes\View\uFrmCadDefault.pas</Transaction>
+    <Transaction>2017/08/09 15:30:02.000.275,D:\Charles\Delphi\Fortes\Unit1.dfm=D:\Charles\Delphi\Fortes\View\uFrmCadDefault.dfm</Transaction>
+    <Transaction>2017/08/09 15:46:58.000.373,=D:\Charles\Delphi\Fortes\Unit2.pas</Transaction>
+    <Transaction>2017/08/09 15:47:44.000.319,=D:\Charles\Delphi\Fortes\Unit1.pas</Transaction>
+    <Transaction>2017/08/09 15:48:03.000.716,D:\Charles\Delphi\Fortes\Unit1.dfm=D:\Charles\Delphi\Fortes\View\uFrmCadEmpresa.dfm</Transaction>
+    <Transaction>2017/08/09 15:48:03.000.716,D:\Charles\Delphi\Fortes\Unit1.pas=D:\Charles\Delphi\Fortes\View\uFrmCadEmpresa.pas</Transaction>
+    <Transaction>2017/08/09 19:46:54.000.101,=D:\Charles\Delphi\Fortes\Model\uAtrib.pas</Transaction>
+    <Transaction>2017/08/09 19:47:04.000.357,D:\Charles\Delphi\Fortes\Model\uAtrib.pas=D:\Charles\Delphi\Fortes\Model\uAtributos.pas</Transaction>
+    <Transaction>2017/08/09 19:57:17.000.530,=D:\Charles\Delphi\Fortes\Controller\uPersistentObject.pas</Transaction>
+    <Transaction>2017/08/09 21:20:04.000.184,=C:\Users\rchar\AppData\Local\Temp\Rar$DRa0.497\ORMDelphi-Parte-3\uConnection.pas</Transaction>
+    <Transaction>2017/08/09 21:20:18.000.644,C:\Users\rchar\AppData\Local\Temp\Rar$DRa0.497\ORMDelphi-Parte-3\uConnection.pas=</Transaction>
+    <Transaction>2017/08/09 21:20:43.000.676,=D:\Charles\Delphi\Fortes\Utils\uConnection.pas</Transaction>
+    <Transaction>2017/08/10 12:22:28.000.196,=D:\Charles\Delphi\Fortes\Unit1.pas</Transaction>
+    <Transaction>2017/08/10 12:23:44.000.521,D:\Charles\Delphi\Fortes\View\uFrmLista.dfm=D:\Charles\Delphi\Fortes\Unit1.dfm</Transaction>
+    <Transaction>2017/08/10 12:23:44.000.521,D:\Charles\Delphi\Fortes\View\uFrmLista.pas=D:\Charles\Delphi\Fortes\Unit1.pas</Transaction>
+    <Transaction>2017/08/11 06:59:43.000.271,=D:\Charles\Delphi\Fortes\Unit1.pas</Transaction>
+    <Transaction>2017/08/11 07:00:06.000.220,D:\Charles\Delphi\Fortes\Unit1.dfm=D:\Charles\Delphi\Fortes\View\uFrmCadBombas.dfm</Transaction>
+    <Transaction>2017/08/11 07:00:06.000.220,D:\Charles\Delphi\Fortes\Unit1.pas=D:\Charles\Delphi\Fortes\View\uFrmCadBombas.pas</Transaction>
+    <Transaction>2017/08/11 07:56:46.000.064,=D:\Charles\Delphi\Fortes\Unit2.pas</Transaction>
+    <Transaction>2017/08/11 07:57:06.000.003,D:\Charles\Delphi\Fortes\Unit2.pas=D:\Charles\Delphi\Fortes\View\uFrmCadTanques.pas</Transaction>
+    <Transaction>2017/08/11 07:57:06.000.003,D:\Charles\Delphi\Fortes\Unit2.dfm=D:\Charles\Delphi\Fortes\View\uFrmCadTanques.dfm</Transaction>
+  </Transactions>
+</BorlandProject>

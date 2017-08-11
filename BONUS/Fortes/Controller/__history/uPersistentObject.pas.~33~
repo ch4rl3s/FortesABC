@@ -1,0 +1,334 @@
+unit uPersistentObject;
+
+interface
+
+uses
+  Rtti, StrUtils, Variants, Classes, FireDAC.Comp.Client,
+  FireDAC.VCLUI.Wait, FireDAC.DApt, uConnection, uAtributos, SysUtils;
+
+type
+  TPersintentObject = class
+  private
+    FSQL: WideString;
+    function GetValue(const ARTP: TRttiProperty; const AFK: Boolean): String;
+    procedure SetValue(P: TRttiProperty; S: Variant);
+  public
+    property CustomSQL: WideString read FSQL write FSQL;
+    function Insert: Boolean; virtual;
+    function Update: Boolean; virtual;
+    function Delete: Boolean; virtual;
+    procedure Load(const AValue: Integer); overload; virtual; abstract;
+    function Load: Boolean; overload;
+    function LoadAll: TFDQuery; virtual;
+    function GeyKeyField: String; virtual;
+  end;
+
+implementation
+
+{ TPersintentObject }
+
+function TPersintentObject.Delete: Boolean;
+begin
+
+end;
+
+function TPersintentObject.GetValue(const ARTP: TRttiProperty; const AFK: Boolean): String;
+begin
+  case ARTP.PropertyType.TypeKind of
+    tkUnknown, tkInteger, tkInt64:
+      Result := ARTP.GetValue(Self).ToString;
+    tkEnumeration:
+      Result := IntToStr(Integer(ARTP.GetValue(Self).AsBoolean));
+    tkChar, tkString, tkWChar, tkLString, tkWString, tkUString:
+      Result := QuotedStr(ARTP.GetValue(Self).ToString);
+    tkFloat:
+      Result := StringReplace(FormatFloat('0.00', ARTP.GetValue(Self).AsCurrency), FormatSettings.DecimalSeparator, '.',
+        [rfReplaceAll, rfIgnoreCase]);
+  end;
+
+  if (AFK) and (Result = '0') then
+    Result := 'null';
+end;
+
+function TPersintentObject.GeyKeyField: String;
+var
+  RTP: TRttiProperty;
+  Att: TCustomAttribute;
+  RTT: TRttiType;
+  Ctx: TRttiContext;
+begin
+  Result := '';
+  Ctx    := TRttiContext.Create;
+  try
+    RTT := Ctx.GetType(ClassType);
+    for RTP in RTT.GetProperties do
+    begin
+      for Att in RTP.GetAttributes do
+      begin
+        if Att is FieldName then
+        begin
+          if (FieldName(Att).PK) then
+          begin
+            Result := FieldName(Att).Name;
+          end;
+        end;
+      end;
+    end;
+  finally
+    Ctx.Free;
+  end;
+
+end;
+
+function TPersintentObject.Insert: Boolean;
+var
+  Ctx                                          : TRttiContext;
+  RTT                                          : TRttiType;
+  RTP                                          : TRttiProperty;
+  Att                                          : TCustomAttribute;
+  SQL, Field, Value, FieldID, NomeTabela, Error: String;
+  Qry                                          : TFDQuery;
+begin
+  Field := '';
+  Value := '';
+  TConnection.GetInstance.BeginTrans;
+  Ctx := TRttiContext.Create;
+  try
+    try
+      RTT := Ctx.GetType(ClassType);
+      for Att in RTT.GetAttributes do
+      begin
+        if Att is TableName then
+        begin
+          SQL        := 'INSERT INTO ' + TableName(Att).Name;
+          NomeTabela := TableName(Att).Name;
+        end;
+      end;
+
+      for RTP in RTT.GetProperties do
+      begin
+        for Att in RTP.GetAttributes do
+        begin
+          if Att is FieldName then
+          begin
+            if not(FieldName(Att).AutoInc) then { Auto incremento não pode entrar no insert }
+            begin
+              Field := Field + FieldName(Att).Name + ',';
+              Value := Value + GetValue(RTP, FieldName(Att).FK) + ',';
+            end
+            else
+              FieldID := FieldName(Att).Name;
+          end;
+        end;
+      end;
+
+      Field := Copy(Field, 1, Length(Field) - 1);
+      Value := Copy(Value, 1, Length(Value) - 1);
+
+      SQL := SQL + ' (' + Field + ') VALUES (' + Value + ')';
+      if Trim(CustomSQL) <> '' then
+        SQL  := CustomSQL;
+      Result := TConnection.GetInstance.Execute(SQL, Error);
+
+      SQL := 'SELECT ' + FieldID + ' FROM ' + NomeTabela + ' ORDER BY ' + FieldID + ' DESC';
+      Qry := TConnection.GetInstance.ExecuteQuery(SQL);
+      // Qry.Next;
+      for RTP in RTT.GetProperties do
+      begin
+        for Att in RTP.GetAttributes do
+        begin
+          if (Att is FieldName) and (FieldName(Att).AutoInc) then
+          begin
+            RTP.SetValue(Self, TValue.FromVariant(Qry.Fields[0].AsInteger));
+          end;
+        end;
+      end;
+    finally
+      CustomSQL := '';
+      TConnection.GetInstance.Commit;
+      Ctx.Free;
+    end;
+  except
+    TConnection.GetInstance.Rollback;
+    raise;
+  end;
+end;
+
+function TPersintentObject.Load: Boolean;
+var
+  Ctx       : TRttiContext;
+  RTT       : TRttiType;
+  RTP       : TRttiProperty;
+  Att       : TCustomAttribute;
+  SQL, Where: String;
+  Reader    : TFDQuery;
+begin
+  Result := True;
+  Ctx    := TRttiContext.Create;
+  try
+    RTT := Ctx.GetType(ClassType);
+    for Att in RTT.GetAttributes do
+    begin
+      if Att is TableName then
+        SQL := 'SELECT * FROM ' + TableName(Att).Name;
+    end;
+
+    for RTP in RTT.GetProperties do
+    begin
+      for Att in RTP.GetAttributes do
+      begin
+        if Att is FieldName then
+        begin
+          if (FieldName(Att).PK) then
+            Where := Where + Ifthen(Trim(Where) = '', '', ' AND ') + FieldName(Att).Name + ' = ' + GetValue(RTP, FieldName(Att).FK);
+        end;
+      end;
+    end;
+    SQL := SQL + ' WHERE ' + Where;
+
+    if Trim(CustomSQL) <> '' then
+      SQL := CustomSQL;
+
+    Reader := TConnection.GetInstance.ExecuteQuery(SQL);
+
+    if (Assigned(Reader)) and (Reader.RecordCount > 0) then
+    begin
+      with Reader do
+      begin
+        First;
+        while not EOF do
+        begin
+          for RTP in RTT.GetProperties do
+          begin
+            for Att in RTP.GetAttributes do
+            begin
+              if Att is FieldName then
+              begin
+                if Assigned(FindField(FieldName(Att).Name)) then
+                  SetValue(RTP, FieldByName(FieldName(Att).Name).Value);
+              end;
+            end;
+          end;
+          Next;
+        end;
+      end;
+    end
+    else
+      Result := False;
+  finally
+    CustomSQL := '';
+    Ctx.Free;
+  end;
+end;
+
+function TPersintentObject.LoadAll: TFDQuery;
+var
+  Ctx       : TRttiContext;
+  RTT       : TRttiType;
+  Prop      : TRttiProperty;
+  Att       : TCustomAttribute;
+  SQL, Where: String;
+begin
+  Ctx := TRttiContext.Create;
+  try
+    RTT := Ctx.GetType(ClassType);
+    for Att in RTT.GetAttributes do
+    begin
+      if Att is TableName then
+        SQL := 'SELECT * FROM ' + TableName(Att).Name;
+    end;
+
+    // for Prop in RTT.GetProperties do
+    // begin
+    // for Att in Prop.GetAttributes do
+    // begin
+    // if Att is FieldName then
+    // begin
+    // if (FieldName(Att).PK) then
+    // Where := Where + Ifthen(Trim(Where) = '', '', ' AND ') + FieldName(Att).Name + ' = ' + GetValue(Prop, FieldName(Att).FK);
+    // end;
+    // end;
+    // end;
+    // SQL := SQL + ' WHERE ' + Where;
+    //
+    // if Trim(CustomSQL) <> '' then
+    // SQL := CustomSQL;
+
+    Result := TConnection.GetInstance.ExecuteQuery(SQL);
+  finally
+    Ctx.Free;
+  end;
+
+end;
+
+procedure TPersintentObject.SetValue(P: TRttiProperty; S: Variant);
+var
+  V: TValue;
+  w: Word;
+begin
+  w := VarType(S);
+  case w of
+    271:
+      V := StrToFloat(S); { smallmoney }
+    272:
+      V := StrToDateTime(S); { smalldatetime }
+    3:
+      V := StrToInt(S);
+  else
+    begin
+      P.SetValue(Self, TValue.FromVariant(S));
+      exit;
+    end;
+  end;
+  P.SetValue(Self, V);
+end;
+
+function TPersintentObject.Update: Boolean;
+var
+  Ctx                     : TRttiContext;
+  RTT                     : TRttiType;
+  RTP                     : TRttiProperty;
+  Att                     : TCustomAttribute;
+  SQL, Field, Where, Error: String;
+begin
+  Field := '';
+  Ctx   := TRttiContext.Create;
+  try
+    RTT := Ctx.GetType(ClassType);
+    for Att in RTT.GetAttributes do
+    begin
+      if Att is TableName then
+        SQL := 'UPDATE ' + TableName(Att).Name + ' SET';
+    end;
+
+    for RTP in RTT.GetProperties do
+    begin
+      for Att in RTP.GetAttributes do
+      begin
+        if Att is FieldName then
+        begin
+          if (not(FieldName(Att).AutoInc)) and (not(FieldName(Att).PK)) then { Auto incremento não pode entrar no update }
+          begin
+            Field := Field + FieldName(Att).Name + ' = ' + GetValue(RTP, FieldName(Att).FK) + ',';
+          end
+          else if (FieldName(Att).PK) then
+            Where := Where + Ifthen(Trim(Where) = '', '', ' AND ') + FieldName(Att).Name + ' = ' + GetValue(RTP, FieldName(Att).FK);
+        end;
+      end;
+    end;
+
+    Field := Copy(Field, 1, Length(Field) - 1);
+    SQL   := SQL + ' ' + Field + ' WHERE ' + Where;
+    if Trim(CustomSQL) <> '' then
+      SQL  := CustomSQL;
+    Result := TConnection.GetInstance.Execute(SQL, Error);
+    if not Result then
+      raise Exception.Create(Error);
+  finally
+    CustomSQL := '';
+    Ctx.Free;
+  end;
+end;
+
+end.
+

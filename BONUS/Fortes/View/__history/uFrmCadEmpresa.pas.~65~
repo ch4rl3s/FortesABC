@@ -1,0 +1,85 @@
+unit uFrmCadEmpresa;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, uFrmCadDefault, System.ImageList,
+  Vcl.ImgList, Vcl.StdCtrls, Vcl.ExtCtrls, Data.DB, Vcl.Grids, Vcl.DBGrids,
+  Vcl.Mask, Vcl.DBCtrls, FireDAC.Stan.Intf, FireDAC.Stan.Option,
+  FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
+  FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet,
+  FireDAC.Comp.Client, moEmpresa, FireDAC.UI.Intf, FireDAC.Stan.Def,
+  FireDAC.Stan.Pool, FireDAC.Phys, FireDAC.VCLUI.Wait, FireDAC.Stan.ExprFuncs,
+  FireDAC.Phys.SQLiteDef, FireDAC.Phys.SQLite, dxGDIPlusClasses, Vcl.Buttons, uGlobal;
+
+type
+  TFrmCadEmpresa = class(TFrmCadDefault)
+    Label2: TLabel;
+    Label3: TLabel;
+    Label4: TLabel;
+    edtCodigo: TEdit;
+    edtCNPJ: TMaskEdit;
+    edtRazaoSocial: TEdit;
+    procedure FormCreate(Sender: TObject);
+    procedure btnOKClick(Sender: TObject);
+    constructor Create(Sender: TObject; Crud: TTpCrud; AValue: Integer); reintroduce; override;
+  private
+    gEmpresa: TEmpresa;
+    gAction : TTpCrud;
+    gID     : Integer;
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  FrmCadEmpresa: TFrmCadEmpresa;
+
+implementation
+
+{$R *.dfm}
+
+procedure TFrmCadEmpresa.btnOKClick(Sender: TObject);
+begin
+  gEmpresa.Codigo      := StrToInt(edtCodigo.Text);
+  gEmpresa.RazaoSocial := edtRazaoSocial.Text;
+  gEmpresa.CNPJ        := edtCNPJ.Text;
+
+  if gEmpresa.Insert then
+    Application.MessageBox('Dados salvo com sucesso!', 'Informativo', MB_OK + MB_ICONINFORMATION)
+  else
+    Application.MessageBox('Erro ao salvar!', 'Informativo', MB_OK + MB_ICONERROR);
+  Close;
+end;
+
+constructor TFrmCadEmpresa.Create(Sender: TObject; Crud: TTpCrud; AValue: Integer);
+begin
+  inherited Create(Sender, Crud, AValue);
+  gID     := AValue;
+  gAction := Crud;
+end;
+
+procedure TFrmCadEmpresa.FormCreate(Sender: TObject);
+begin
+  gEmpresa := TEmpresa.Create;
+  case gAction of
+    tpCrudInsert:
+      begin
+        edtCodigo.Text      := '0';
+        edtRazaoSocial.Text := '';
+        edtCNPJ.Text        := '';
+      end;
+    tpCrudEdit:
+      begin
+        gEmpresa.Load(gID);
+        edtCodigo.Text      := gEmpresa.Codigo.ToString;
+        edtRazaoSocial.Text := gEmpresa.RazaoSocial;
+        edtCNPJ.Text        := gEmpresa.CNPJ;
+      end;
+
+  end;
+
+end;
+
+end.
